@@ -9,14 +9,14 @@ COMMENT ON DATABASE wms
 
 
 CREATE TABLE INVENTORY (
-	ID 				integer PRIMARY KEY,
+	ID 				serial PRIMARY KEY,
 	SKU 			text NOT NULL,
 	Quantity 		integer,
 	Location 		text
 );
 
 CREATE TABLE ORDERS (
-	ID 				integer PRIMARY KEY,
+	ID 				serial PRIMARY KEY,
 	Orderline		text NOT NULL,
 	SKU	 			text NOT NULL,
 	Quantity 		integer
