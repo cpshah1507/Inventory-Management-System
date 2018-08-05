@@ -1,14 +1,25 @@
-var tableData = [["1","SKU1","3","Loc-1"],["2","SKU2","5","Loc-2"]];
-
 $( function() {
-    $( "#tabs" ).tabs();
+    $( "#tabs" ).tabs({
+    	create: function(event,ui)
+    	{
+    		$('#InventoryTable').DataTable({
+				"ajax": "/getInventory",
+				"columns": [{"data":"id"},{"data":"sku"},{"data":"quantity"},{"data":"location"}]
+			});
+    	}
+    });
 
-	$('#InventoryTable').DataTable({
-	    data: tableData
-	});
+    dataTablesLoaded = []
 
-	$.get('/getInventory',function(data){
-		console.log(data);
-	});
+    $('.ordersTab').click(function(){
+    	if($.inArray("OrderTable",dataTablesLoaded) === -1)
+    	{
+	    	$('#OrderTable').DataTable({
+				"ajax": "/getOrders",
+				"columns": [{"data":"id"},{"data":"orderline"},{"data":"sku"},{"data":"quantity"}]
+			});
+			dataTablesLoaded.push("OrderTable");
+		}
+    });
 });
 

@@ -74,12 +74,47 @@ router.get('/getInventory',function(req,res,next) {
 		    if (handleError(err)) return;	
 		    
 		     done();	        		    
-		    res.setHeader('Content-Type', 'application/json');    		
-    		res.send(result);		        		    		    
+		    res.setHeader('Content-Type', 'application/json');    	
+		    final_result = {"data":result.rows};
+    		res.send(final_result);		        		    		    
 	    });
 	});	
 });
 
+
+// Get Order Table data
+router.get('/getOrders',function(req,res,next) {			
+	pg.connect(conString, function (err, client, done)
+	{
+		var handleError = function (err) {
+		    // no error occurred, continue with the request
+		    if (!err) return false;
+		    if (client) {
+		        done(client);
+		    }
+		    res.writeHead(500, { 'content-type': 'text/plain' });
+		    res.end('An error occurred');
+		    return true;
+		};
+		// handle an error from the connection
+	    if (handleError(err)) return;	  	    
+
+	    // Set Search Path
+	    client.query("SELECT * FROM Orders", function(err,result)
+	    {
+	    	// handle an error from the query
+			if(err)
+				console.log(err);
+
+		    if (handleError(err)) return;	
+		    
+		     done();	        		    
+		    res.setHeader('Content-Type', 'application/json');    	
+		    final_result = {"data":result.rows};
+    		res.send(final_result);		        		    		    
+	    });
+	});	
+});
 
 module.exports = router;
 

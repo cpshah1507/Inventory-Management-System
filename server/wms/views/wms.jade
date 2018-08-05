@@ -15,9 +15,9 @@ html
     #tabs
       ul
         li
-          a(href='#Inventory') Inventory
+          a.inventoryTab(href='#Inventory') Inventory
         li
-          a(href='#Orders') Orders
+          a.ordersTab(href='#Orders') Orders
       #Inventory
         table#InventoryTable
           thead
@@ -28,4 +28,11 @@ html
               th Location
           tbody
       #Orders
-        p TODO jQuery Data Table
+        table#OrderTable
+          thead
+            tr
+              th ID
+              th OrderLine
+              th SKU
+              th Quantity
+          tbody
