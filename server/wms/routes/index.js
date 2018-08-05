@@ -2,12 +2,11 @@ var express = require('express');
 var router = express.Router();
 
 /* GET home page. */
+/*
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
-
-module.exports = router;
-
+*/
 
 //var http = require('http');
 //var net = require('net');
@@ -22,7 +21,7 @@ pg.defaults.poolSize = 1;
 /*********************************** Database Routes*****************************************/
 /********************************************************************************************/
 
-router.get('/wms',function(req,res,next) {
+router.get('/',function(req,res,next) {
 	// get a pg client from the connection pool
  	//this initializes a connection pool
 	//it will keep idle connections open for a (configurable) 30 seconds
@@ -45,23 +44,5 @@ router.get('/wms',function(req,res,next) {
 	});  
 });
 
+module.exports = router;
 
-router.get('/ecsconsole',function(req,res,next) {
-	pg.connect(conString, function (err, client, done) {
-		var handleError = function (err) {
-		    // no error occurred, continue with the request
-		    if (!err) return false;
-		    if (client) {
-		        done(client);
-		    }
-		    res.writeHead(500, { 'content-type': 'text/plain' });
-		    res.end('An error occurred');
-		    return true;
-		};
-	    // handle an error from the connection
-	    if (handleError(err)) return;	      
-	    done();     
-
-		res.render('ecsconsole', { title: 'Cortex Console' , dbConnection: 'Successful'});	
-	});  
-});

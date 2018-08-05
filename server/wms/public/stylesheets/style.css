@@ -6,3 +6,6 @@ body {
 a {
   color: #00B7FF;
 }
+
+.titleHeading {text-align: center}
+#tabs {margin-top:10px;}

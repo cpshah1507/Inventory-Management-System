@@ -1,6 +1,22 @@
-extends layout
-
-block content
-  h1= title
-  p Welcome to #{title}
-  span DB connection status: #{dbConnection} 
+doctype html
+html
+  head
+    title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/jquery-ui.css')
+    script(src='/javascripts/jquery-1.12.4.js')
+    script(src='/javascripts/jquery-ui.js')
+    script(src='/javascripts/script.js')
+  body
+    h1.titleHeading Warehouse Management System
+    span DB connection status: #{dbConnection}
+    #tabs
+      ul
+        li
+          a(href='#Inventory') Inventory
+        li
+          a(href='#Orders') Orders
+      #Inventory
+        p TODO jQuery Data Table
+      #Orders
+        p TODO jQuery Data Table
