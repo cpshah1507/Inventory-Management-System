@@ -4,8 +4,10 @@ html
     title
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel='stylesheet', href='/stylesheets/jquery-ui.css')
+    link(rel='stylesheet', href='/stylesheets/jquery.dataTables.min.css')
     script(src='/javascripts/jquery-1.12.4.js')
     script(src='/javascripts/jquery-ui.js')
+    script(src='/javascripts/jquery.dataTables.min.js')
     script(src='/javascripts/script.js')
   body
     h1.titleHeading Warehouse Management System
@@ -17,6 +19,13 @@ html
         li
           a(href='#Orders') Orders
       #Inventory
-        p TODO jQuery Data Table
+        table#InventoryTable
+          thead
+            tr
+              th ID
+              th SKU
+              th Quantity
+              th Location
+          tbody
       #Orders
         p TODO jQuery Data Table
