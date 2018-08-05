@@ -6,5 +6,9 @@ $( function() {
 	$('#InventoryTable').DataTable({
 	    data: tableData
 	});
+
+	$.get('/getInventory',function(data){
+		console.log(data);
+	});
 });
 
