@@ -19,5 +19,6 @@ CREATE TABLE ORDERS (
 	ID 				serial PRIMARY KEY,
 	Orderline		text NOT NULL,
 	SKU	 			text NOT NULL,
-	Quantity 		integer
+	Quantity 		integer,
+	OrderState		text
 );

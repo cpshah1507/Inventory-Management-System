@@ -16,7 +16,7 @@ $( function() {
     	{
 	    	$('#OrderTable').DataTable({
 				"ajax": "/getOrders",
-				"columns": [{"data":"id"},{"data":"orderline"},{"data":"sku"},{"data":"quantity"}]
+				"columns": [{"data":"id"},{"data":"orderline"},{"data":"sku"},{"data":"quantity"},{"data":"orderstate"}]
 			});
 			dataTablesLoaded.push("OrderTable");
 		}
