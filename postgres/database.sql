@@ -1,11 +1,11 @@
-CREATE DATABASE wms
+CREATE DATABASE ims
     WITH 
     OWNER = postgres
     ENCODING = 'UTF8'
     CONNECTION LIMIT = -1;
 
-COMMENT ON DATABASE wms
-    IS 'Warehouse Management System';
+COMMENT ON DATABASE ims
+    IS 'Inventory Management System';
 
 
 CREATE TABLE INVENTORY (
