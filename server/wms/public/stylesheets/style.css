@@ -9,4 +9,4 @@ a {
 
 .titleHeading {text-align: center}
 #tabs {margin-top:10px;}
-table td {text-align: center;}
+table td, table th {text-align: center;}
