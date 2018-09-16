@@ -13,7 +13,7 @@ router.get('/', function(req, res, next) {
 
 // Postgres connection to DB
 var pg = require('pg');
-var conString = "postgres://postgres:admin@127.0.0.1/wms";
+var conString = "postgres://postgres:admin@127.0.0.1/ims";
 
 pg.defaults.poolSize = 1;
 
@@ -40,7 +40,8 @@ router.get('/',function(req,res,next) {
 	    // handle an error from the connection
 	    if (handleError(err)) return;	      
 	    done();        
-	    res.render('wms', { title: 'WMS' , dbConnection: 'Successful'});	
+	    res.render('ims', { title: 'IMS' , dbConnection: 'Successful'});	
+	    //res.render('index', { title: 'IMS' , dbConnection: 'Successful'});	
 	});  
 });
 

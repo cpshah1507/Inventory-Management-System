@@ -3,39 +3,12 @@ html
   head
     title
     link(rel='stylesheet', href='/stylesheets/style.css')
-    link(rel='stylesheet', href='/stylesheets/jquery-ui.css')
-    link(rel='stylesheet', href='/stylesheets/jquery.dataTables.min.css')
-    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
-    script(src='/javascripts/jquery-1.12.4.js')
-    script(src='/javascripts/jquery-ui.js')
-    script(src='/javascripts/bootstrap.min.js')
-    script(src='/javascripts/jquery.dataTables.min.js')
+    link(rel='stylesheet', href='/dojo-release-1.14.1/dgrid/css/dgrid.css')
+    link(rel='stylesheet', href='/dojo-release-1.14.1/dijit/themes/claro/claro.css')
+    script(src='/dojo-release-1.14.1/dojo/dojo.js')
     script(src='/javascripts/script.js')
-  body
+  body.claro
     h1.titleHeading Inventory Management System
     span DB connection status: #{dbConnection}
-    #tabs
-      ul
-        li
-          a.inventoryTab(href='#Inventory') Inventory
-        li
-          a.ordersTab(href='#Orders') Orders
-      #Inventory
-        table#InventoryTable
-          thead
-            tr
-              th ID
-              th SKU
-              th Quantity
-              th Location
-          tbody
-      #Orders
-        table#OrderTable
-          thead
-            tr
-              th ID
-              th OrderLine
-              th SKU
-              th Quantity
-              th OrderState
-          tbody
+    div.tabsWrapper
+      #tabs
