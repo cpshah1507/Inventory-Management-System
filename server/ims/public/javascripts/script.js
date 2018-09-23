@@ -1,17 +1,5 @@
-/*
-require(["dojo/request", "dojo/domReady!"], function(request){
-    request("/getInventory").then(
-        function(data){
-            rows = data.data;
-        },
-        function(error){
-            console.log("An error occurred: " + error);
-        }
-    );
-});
-*/
-
-require(["dgrid/Grid","dijit/layout/TabContainer", "dijit/layout/ContentPane", "dojo/domReady!"], function(Grid, TabContainer, ContentPane){
+require(["dgrid/Grid","dijit/layout/TabContainer", "dijit/layout/ContentPane", "dojo/request","dojo/aspect", "dojo/domReady!"],
+    function(Grid, TabContainer, ContentPane, request, aspect){
     var tc = new TabContainer({
         style: "height: 100%; width: 100%;"
     }, "tabs");
@@ -30,46 +18,53 @@ require(["dgrid/Grid","dijit/layout/TabContainer", "dijit/layout/ContentPane", "
 
     tc.startup();
 
-    var data = [
-        { first: 'Bob', last: 'Barker', age: 89 },
-        { first: 'Vanna', last: 'White', age: 55 },
-        { first: 'Pat', last: 'Sajak', age: 65 }
-    ];
- 
-    var grid = new Grid({
-        columns: {
-            first: 'First Name',
-            last: 'Last Name',
-            age: 'Age'
+    aspect.after(cp1, "_onShow", function() {
+        updateInvetory(Grid, request);   
+    });
+
+    aspect.after(cp2, "_onShow", function() {
+        updateOrders(Grid, request);
+    });
+
+    updateInvetory(Grid,request);
+});
+
+function updateInvetory(Grid, request)
+{
+    request.get("/getInventory",{handleAs: "json"}).then(
+        function(result){
+            var grid = new Grid({
+                columns: {
+                    id: 'ID',
+                    sku: 'SKU',
+                    quantity: 'Quantity',
+                    location: 'Location'
+                }
+            }, 'InventoryTable');
+            grid.renderArray(result['data']);    
+        },
+        function(error){
+            console.log("An error occurred: " + error);
         }
-    }, 'InventoryTable');
-    grid.renderArray(data);    
-});
+    );
+}
 
-// jQuery Data Table Code
-/*
-$( function() {
-    $( "#tabs" ).tabs({
-    	create: function(event,ui)
-    	{
-    		$('#InventoryTable').DataTable({
-				"ajax": "/getInventory",
-				"columns": [{"data":"id"},{"data":"sku"},{"data":"quantity"},{"data":"location"}]
-			});
-    	}
-    });
-
-    dataTablesLoaded = []
-
-    $('.ordersTab').click(function(){
-    	if($.inArray("OrderTable",dataTablesLoaded) === -1)
-    	{
-	    	$('#OrderTable').DataTable({
-				"ajax": "/getOrders",
-				"columns": [{"data":"id"},{"data":"orderline"},{"data":"sku"},{"data":"quantity"},{"data":"orderstate"}]
-			});
-			dataTablesLoaded.push("OrderTable");
-		}
-    });
-});
-*/
+function updateOrders(Grid, request)
+{
+    request.get("/getOrders",{handleAs: "json"}).then(
+        function(result){
+            var grid = new Grid({
+                columns: {
+                    orderline: 'OrderLine',
+                    sku: 'SKU',
+                    quantity: 'Quantity',
+                    orderstate: 'Order State'
+                }
+            }, 'OrderTable');
+            grid.renderArray(result['data']);    
+        },
+        function(error){
+            console.log("An error occurred: " + error);
+        }
+    );
+}
