@@ -17,9 +17,13 @@ var conString = "postgres://postgres:admin@127.0.0.1/ims";
 
 pg.defaults.poolSize = 1;
 
-/********************************************************************************************/
-/*********************************** Database Routes*****************************************/
-/********************************************************************************************/
+var ECT = require('ect');
+var path = require('path');
+// view engine setup
+var renderer = ECT({
+    root: path.join(__dirname, '/../views'),
+    ext: '.ect'
+});
 
 router.get('/',function(req,res,next) {
 	// get a pg client from the connection pool
@@ -40,13 +44,19 @@ router.get('/',function(req,res,next) {
 	    // handle an error from the connection
 	    if (handleError(err)) return;	      
 	    done();        
-	    res.render('ims', { title: 'IMS' , dbConnection: 'Successful'});	
-	    //res.render('index', { title: 'IMS' , dbConnection: 'Successful'});	
+	    renderer.render('index', { title: 'IMS' , dbConnection: 'Successful'},function(err,html){
+	        if (err)
+	        {
+	            console.log("Error" + err);
+	        }
+	        res.end(html);
+	    });	
 	});  
 });
 
-
-
+/********************************************************************************************/
+/*********************************** Database Routes*****************************************/
+/********************************************************************************************/
 
 // Get Inventory Table data
 router.get('/getInventory',function(req,res,next) {			
