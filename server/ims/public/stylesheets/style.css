@@ -7,3 +7,5 @@ a {color: #00B7FF;}
 .sectionButtonWrapper .sectionButtonLayer {display: block;width:70px;margin: auto;padding-top:5px;}
 #tabs {margin-top:10px;}
 table td, table th {text-align: center;}
+
+.chartHeading {text-align: center;}

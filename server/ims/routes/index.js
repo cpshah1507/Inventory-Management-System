@@ -25,11 +25,15 @@ var renderer = ECT({
     ext: '.ect'
 });
 
-router.get('/',function(req,res,next) {
-	// get a pg client from the connection pool
- 	//this initializes a connection pool
-	//it will keep idle connections open for a (configurable) 30 seconds
-	//and set a limit of 1 (also configurable)
+router.get('/',routeHome);
+router.get('/overview',routeHome);
+
+function routeHome(req,res,next)
+{
+	// Get a pg client from the connection pool
+ 	// this initializes a connection pool
+	// it will keep idle connections open for a (configurable) 30 seconds
+	// and set a limit of 1 (also configurable)
 	pg.connect(conString, function (err, client, done) {
 		var handleError = function (err) {
 		    // no error occurred, continue with the request
@@ -52,6 +56,31 @@ router.get('/',function(req,res,next) {
 	        res.end(html);
 	    });	
 	});  
+}
+
+router.get('/charts',function(req,res,next){
+	pg.connect(conString, function (err, client, done) {
+		var handleError = function (err) {
+		    // no error occurred, continue with the request
+		    if (!err) return false;
+		    if (client) {
+		        done(client);
+		    }
+		    res.writeHead(500, { 'content-type': 'text/plain' });
+		    res.end('An error occurred');
+		    return true;
+		};
+	    // handle an error from the connection
+	    if (handleError(err)) return;	      
+	    done();        
+	    renderer.render('charts', { title: 'IMS' , dbConnection: 'Successful'},function(err,html){
+	        if (err)
+	        {
+	            console.log("Error" + err);
+	        }
+	        res.end(html);
+	    });	
+	});
 });
 
 /********************************************************************************************/
