@@ -1,5 +1,25 @@
-require(["dgrid/Grid","dijit/layout/TabContainer", "dijit/layout/ContentPane", "dojo/request","dojo/aspect", "dojo/domReady!"],
-    function(Grid, TabContainer, ContentPane, request, aspect){
+require(["dgrid/Grid","dijit/layout/TabContainer", "dijit/layout/ContentPane", "dojo/request","dojo/aspect","dijit/form/Button", "dojo/domReady!"],
+    function(Grid, TabContainer, ContentPane, request, aspect, Button){
+
+    var button1 = new Button({
+        label: "Overview",
+        onClick: function(){ console.log("First button was clicked!"); }
+    }, "btn1");
+    button1.startup();
+
+    var button2 = new Button({
+        label: "Charts",
+        onClick: function(){ console.log("Second button was clicked!"); }
+    }, "btn2");
+    button2.startup();
+
+    var button3 = new Button({
+        label: "Details",
+        onClick: function(){ console.log("Third button was clicked!"); }
+    }, "btn3");
+    button3.startup();
+
+
     var tc = new TabContainer({
         style: "height: 100%; width: 100%;"
     }, "tabs");
