@@ -1,51 +1,62 @@
-require(["dojo/request","dojo/aspect","dojox/charting/Chart","dojox/charting/themes/Tom","dojox/charting/plot2d/Columns","dojox/charting/plot2d/Markers",
+require(["dojo/dom","dojo/dom-construct","dojo/on","dojo/request","dojo/aspect","dojox/charting/Chart","dojox/charting/themes/Tom","dojox/charting/plot2d/Lines","dojox/charting/plot2d/Markers",
     "dojox/charting/axis2d/Default","dojo/domReady!"],
-    function(request, aspect, Chart, theme)
+    function(dom, domConstruct, on, request, aspect, Chart, theme)
     {
-        // Define the data
-        var chartData = [10000,9200,11811,12000,7662,13887,14200,12222,12000,10009,11288,12099];
+        var invRadio = dom.byId("invChartRadio");
+        var orderRadio = dom.byId("orderChartRadio");
 
-        // Create the chart within it&#x27;s "holding" node
-        var chart = new Chart("chartNode");
-
-        // Set the theme
-        chart.setTheme(theme);
-
-        // Add the only/default plot
-        chart.addPlot("default", {
-            type: "Columns",
-            markers: true,
-            gap: 5
+        on(invRadio,"change",function(isChecked){
+            if(isChecked)
+            {
+                var chart = dom.byId("chartNode");
+                domConstruct.empty(chart);
+                updateInventoryChart(request, aspect, Chart, theme);
+            }
         });
-
-        // Add axes
-        chart.addAxis("x");
-        chart.addAxis("y", { vertical: true, fixLower: "major", fixUpper: "major" });
-
-        // Add the series of data
-        chart.addSeries("Monthly Sales",chartData);
-
-        // Render the chart!
-        chart.render();
+        on(orderRadio,"change",function(isChecked){
+            if(isChecked)
+            {
+                var chart = dom.byId("chartNode");
+                domConstruct.empty(chart);
+                updateOrderChart(request, aspect, Chart, theme);
+            }
+        });
+        updateInventoryChart(request, aspect, Chart, theme);
     }
 );
 
 
-
-
-function updateInvetory(Grid, request)
+function updateInventoryChart(request, aspect, Chart, theme)
 {
     request.get("/getInventory",{handleAs: "json"}).then(
         function(result){
-            var grid = new Grid({
-                columns: {
-                    id: 'ID',
-                    sku: 'SKU',
-                    quantity: 'Quantity',
-                    location: 'Location'
-                }
-            }, 'InventoryTable');
-            grid.renderArray(result['data']);    
+            var chartData = [];
+
+            result['data'].forEach(function(elem){
+                chartData.push(elem['quantity']);
+            });
+
+            // Create the chart within it&#x27;s "holding" node
+            var chart = new Chart("chartNode");
+
+            // Set the theme
+            //chart.setTheme(theme);
+
+            // Add the only/default plot
+            chart.addPlot("default", {
+                type: "Lines",
+                markers: true
+            });
+
+            // Add axes
+            chart.addAxis("x");
+            chart.addAxis("y",{ min: 1, max: 20, vertical: true, fixLower: "major", fixUpper: "major" });
+
+            // Add the series of data
+            chart.addSeries("SKU Quantity",chartData);
+        
+            // Render the chart!
+            chart.render();
         },
         function(error){
             console.log("An error occurred: " + error);
@@ -53,19 +64,38 @@ function updateInvetory(Grid, request)
     );
 }
 
-function updateOrders(Grid, request)
+
+function updateOrderChart(request, aspect, Chart, theme)
 {
     request.get("/getOrders",{handleAs: "json"}).then(
         function(result){
-            var grid = new Grid({
-                columns: {
-                    orderline: 'OrderLine',
-                    sku: 'SKU',
-                    quantity: 'Quantity',
-                    orderstate: 'Order State'
-                }
-            }, 'OrderTable');
-            grid.renderArray(result['data']);    
+            var chartData = [];
+
+            result['data'].forEach(function(elem){
+                chartData.push(elem['quantity']);
+            });
+
+            // Create the chart within it&#x27;s "holding" node
+            var chart = new Chart("chartNode");
+
+            // Set the theme
+            //chart.setTheme(theme);
+
+            // Add the only/default plot
+            chart.addPlot("default", {
+                type: "Lines",
+                markers: true
+            });
+
+            // Add axes
+            chart.addAxis("x");
+            chart.addAxis("y",{ min: 1, max: 20, vertical: true, fixLower: "major", fixUpper: "major" });
+
+            // Add the series of data
+            chart.addSeries("SKU Quantity",chartData);
+        
+            // Render the chart!
+            chart.render();
         },
         function(error){
             console.log("An error occurred: " + error);

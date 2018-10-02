@@ -2,5 +2,9 @@
 <% extend 'layout' %>
 <script src="/javascripts/chart_script.js"></script>
 <h1 class="chartHeading">Charts</h1>
+<input type="radio" id="invChartRadio" name="charttype" checked />
+<label for="invChartRadio" class="radiolabel">Inventory Chart</label>
+<input type="radio" id="orderChartRadio" name="charttype"/>
+<label for="orderChartRadio" class="radiolabel">Order Chart</label>
 <!-- create the chart -->
 <div id="chartNode" style="width: 550px; height: 550px;"></div>
