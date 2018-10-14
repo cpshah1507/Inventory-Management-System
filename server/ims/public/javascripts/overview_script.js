@@ -1,5 +1,6 @@
-require(["dgrid/Grid","dijit/layout/TabContainer", "dijit/layout/ContentPane", "dojo/request","dojo/aspect", "dojo/domReady!"],
-    function(Grid, TabContainer, ContentPane, request, aspect){
+require(["dojo/_base/declare","dgrid/Grid","dgrid/Keyboard","dgrid/Selection","dijit/layout/TabContainer", "dijit/layout/ContentPane",
+    "dojo/request","dojo/aspect","dstore/Memory","dstore/RequestMemory","dgrid/OnDemandGrid", "dojo/domReady!"],
+    function(declare, Grid, Keyboard, Selection, TabContainer, ContentPane, request, aspect, Memory,RequestMemory, OnDemandGrid){
 
     var tc = new TabContainer({
         style: "height: 100%; width: 100%;"
@@ -20,52 +21,89 @@ require(["dgrid/Grid","dijit/layout/TabContainer", "dijit/layout/ContentPane", "
     tc.startup();
 
     aspect.after(cp1, "_onShow", function() {
-        updateInvetory(Grid, request);   
+        updateInvetory(declare,RequestMemory,OnDemandGrid, Keyboard, Selection, request);   
     });
 
     aspect.after(cp2, "_onShow", function() {
-        updateOrders(Grid, request);
+        updateOrders(declare,RequestMemory,OnDemandGrid, Keyboard, Selection, request);
     });
 
-    updateInvetory(Grid,request);
+    updateInvetory(declare,RequestMemory,OnDemandGrid, Keyboard, Selection,request);
+
+    /*
+    var employees = [
+            {name:'Jim', department:'accounting'},
+            {name:'Bill', department:'engineering'},
+            {name:'Mike', department:'sales'},
+            {name:'John', department:'sales'}
+        ];
+    var employeeStore = new Memory({data:employees, idProperty: 'name'});
+    var salesEmployees = employeeStore.filter({department:'sales'});
+    salesEmployees.forEach(function(employee){
+        // this is called for each employee in the sales department
+        console.log(employee.name);
+    });
+    */
+
+
 });
 
-function updateInvetory(Grid, request)
+function updateInvetory(declare, RequestMemory,OnDemandGrid, Keyboard, Selection, request)
 {
-    request.get("/getInventory",{handleAs: "json"}).then(
-        function(result){
-            var grid = new Grid({
-                columns: {
-                    id: 'ID',
-                    sku: 'SKU',
-                    quantity: 'Quantity',
-                    location: 'Location'
-                }
-            }, 'InventoryTable');
-            grid.renderArray(result['data']);    
-        },
-        function(error){
-            console.log("An error occurred: " + error);
-        }
-    );
+    // Create a new constructor by mixing in the components
+    //var CustomGrid = declare([ Grid, Keyboard, Selection ]);
+    
+    var grid = new OnDemandGrid({
+    collection: new RequestMemory({ target: '/getInventory' }),
+    columns: {
+        id: 'ID',
+        sku: 'SKU',
+        quantity: 'Quantity',
+        location: 'Location'
+    }
+    //,
+    //selectionMode: 'single',
+    // for Keyboard; allow only row-level keyboard navigation
+    //cellNavigation: false
+    }, 'InventoryTable');
+    grid.on('dgrid-select', function (event) {
+        // Report the item from the selected row to the console.
+        console.log('Row selected: ', event.rows[0].data);
+    });
+    grid.on('dgrid-deselect', function (event) {
+        console.log('Row de-selected: ', event.rows[0].data);
+    });
+    grid.on('.dgrid-row:click', function (event) {
+        var row = grid.row(event);
+        console.log('Row clicked:', row.id);
+    }); 
+    grid.startup();
 }
 
-function updateOrders(Grid, request)
+function updateOrders(declare, RequestMemory,OnDemandGrid, Keyboard, Selection, request)
 {
-    request.get("/getOrders",{handleAs: "json"}).then(
-        function(result){
-            var grid = new Grid({
-                columns: {
-                    orderline: 'OrderLine',
-                    sku: 'SKU',
-                    quantity: 'Quantity',
-                    orderstate: 'Order State'
-                }
-            }, 'OrderTable');
-            grid.renderArray(result['data']);    
-        },
-        function(error){
-            console.log("An error occurred: " + error);
+     // Create a new constructor by mixing in the components
+    //var CustomGrid = declare([ Grid, Keyboard, Selection ]);
+
+    var grid = new OnDemandGrid({
+        collection: new RequestMemory({ target: '/getOrders' }),
+        columns: {
+            orderline: 'OrderLine',
+            sku: 'SKU',
+            quantity: 'Quantity',
+            orderstate: 'Order State'
         }
-    );
+        //,
+        //selectionMode: 'single',
+        // for Keyboard; allow only row-level keyboard navigation
+        //cellNavigation: false
+    }, 'OrderTable');
+    grid.on('dgrid-select', function (event) {
+        // Report the item from the selected row to the console.
+        console.log('Row selected: ', event.rows[0].data);
+    });
+    grid.on('dgrid-deselect', function (event) {
+        console.log('Row de-selected: ', event.rows[0].data);
+    });
+    grid.startup();
 }

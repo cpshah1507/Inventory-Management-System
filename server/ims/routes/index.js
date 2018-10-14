@@ -116,7 +116,8 @@ router.get('/getInventory',function(req,res,next) {
 		     done();	        		    
 		    res.setHeader('Content-Type', 'application/json');    	
 		    final_result = {"data":result.rows};
-    		res.send(final_result);		        		    		    
+    		//res.send(final_result);		        		    		    
+    		res.send(result.rows);
 	    });
 	});	
 });
@@ -151,7 +152,8 @@ router.get('/getOrders',function(req,res,next) {
 		     done();	        		    
 		    res.setHeader('Content-Type', 'application/json');    	
 		    final_result = {"data":result.rows};
-    		res.send(final_result);		        		    		    
+    		//res.send(final_result);		
+    		res.send(result.rows);        		    		    
 	    });
 	});	
 });
