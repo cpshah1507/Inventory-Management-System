@@ -19,7 +19,9 @@ require(["dijit/form/Button", "dojo/domReady!"],
 
     var button3 = new Button({
         label: "Details",
-        onClick: function(){ console.log("Third button was clicked!"); }
+        onClick: function(){ 
+            window.location.href = "/details";
+        }
     }, "btn3");
     button3.startup();
 });
