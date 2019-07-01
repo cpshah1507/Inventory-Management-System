@@ -1,6 +1,7 @@
 require(["dijit/form/Button", "dojo/domReady!"],
     function(Button){
 
+    // Open tab for each button click
     var button1 = new Button({
         label: "Overview",
         onClick: function(){

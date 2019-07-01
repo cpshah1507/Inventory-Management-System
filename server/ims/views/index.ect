@@ -1,6 +1,11 @@
 <!doctype html>
 <% extend 'layout' %>
 <script src="/javascripts/overview_script.js"></script>
+<label for="firstname">Search By SKU:</label>
+<input type="text" name="searchInput" value="" placeholder="SKU"
+    data-dojo-type="dijit/form/TextBox"
+    data-dojo-props="trim:true, propercase:true" id="searchInput" />
+    <button id="searchInputBtn" type="button">Search</button>
 <div class="tabsWrapper">
   <div id="tabs"></div>
 </div>

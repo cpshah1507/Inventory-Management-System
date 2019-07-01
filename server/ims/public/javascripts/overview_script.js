@@ -1,6 +1,14 @@
-require(["dojo/_base/declare","dgrid/Grid","dgrid/Keyboard","dgrid/Selection","dijit/layout/TabContainer", "dijit/layout/ContentPane",
-    "dojo/request","dojo/aspect","dstore/Memory","dstore/RequestMemory","dgrid/OnDemandGrid", "dojo/dom-construct","dojo/domReady!"],
-    function(declare, Grid, Keyboard, Selection, TabContainer, ContentPane, request, aspect, Memory,RequestMemory, OnDemandGrid, domConstruct){
+require(["dojo/dom","dojo/on","dojo/dom-construct","dojo/parser","dijit/registry", "dojo/_base/declare","dgrid/Grid","dgrid/Keyboard","dgrid/Selection","dijit/layout/TabContainer", 
+"dijit/layout/ContentPane","dojo/request","dojo/aspect","dstore/Memory","dstore/RequestMemory","dgrid/OnDemandGrid",
+"dojo/parser", "dijit/form/TextBox", "dijit/form/Button","dijit/registry","dojo/domReady!"],
+    function(dom, on, domConstruct, parser, registry, declare, Grid, Keyboard, Selection, TabContainer, ContentPane, request,
+        aspect, Memory,RequestMemory, OnDemandGrid, Button)
+{
+
+    parser.parse();
+    // Search button functionality
+    var searchButton = dom.byId('searchInputBtn');
+    var searchBoxInput = registry.byId('searchInput');
 
     var tc = new TabContainer({
         style: "height: 100%; width: 100%;"
@@ -22,24 +30,34 @@ require(["dojo/_base/declare","dgrid/Grid","dgrid/Keyboard","dgrid/Selection","d
 
     aspect.after(cp1, "_onShow", function() {
         domConstruct.empty("InventoryTable");
-        updateInvetory(declare,RequestMemory,OnDemandGrid, Keyboard, Selection, request);   
+        updateInvetory(declare,RequestMemory,OnDemandGrid, Keyboard, Selection, request,"/getInventory");   
     });
 
     aspect.after(cp2, "_onShow", function() {
+        searchBoxInput.set("value","");
         domConstruct.empty("OrderTable");
         updateOrders(declare,RequestMemory,OnDemandGrid, Keyboard, Selection, request);
     });
 
-    updateInvetory(declare,RequestMemory,OnDemandGrid, Keyboard, Selection,request);
+    updateInvetory(declare,RequestMemory,OnDemandGrid, Keyboard, Selection,request,"/getInventory");
+    
+    
+
+    on(searchButton, "click", function(evt)
+    {
+        domConstruct.empty("InventoryTable");
+        updateInvetory(declare,RequestMemory,OnDemandGrid, Keyboard, Selection,request,"/searchInventoryBySKU?searchParam=" + searchBoxInput.get("value"));
+    });
+
 });
 
-function updateInvetory(declare, RequestMemory,OnDemandGrid, Keyboard, Selection, request)
+function updateInvetory(declare, RequestMemory,OnDemandGrid, Keyboard, Selection, request, requestURL)
 {
     // Create a new constructor by mixing in the components
     //var CustomGrid = declare([ Grid, Keyboard, Selection ]);
         
     var grid = new OnDemandGrid({
-        collection: new RequestMemory({ target: '/getInventory' }),
+        collection: new RequestMemory({ target: requestURL }),
         columns: {
             id: 'ID',
             sku: 'SKU',

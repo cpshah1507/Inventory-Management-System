@@ -126,12 +126,53 @@ router.get('/getInventory',function(req,res,next) {
 		     done();	        		    
 		    res.setHeader('Content-Type', 'application/json');    	
 		    final_result = {"data":result.rows};
-    		//res.send(final_result);		        		    		    
+			//res.send(final_result);		    
+			console.log("result:" + result.rows);	       		    		    
     		res.send(result.rows);
 	    });
 	});	
 });
 
+// Get Inventory Table data based on search query
+router.get('/searchInventoryBySKU',function(req,res,next) {			
+	pg.connect(conString, function (err, client, done)
+	{
+		var handleError = function (err) {
+		    // no error occurred, continue with the request
+		    if (!err) return false;
+		    if (client) {
+		        done(client);
+		    }
+		    res.writeHead(500, { 'content-type': 'text/plain' });
+		    res.end('An error occurred');
+		    return true;
+		};
+		// handle an error from the connection
+	    if (handleError(err)) return;	  	    
+
+		var searchQuery = req.query.searchParam;
+		console.log("SearchParam: " + searchQuery);
+
+		var dbQuery = "SELECT * FROM Inventory where SKU ilike '" + searchQuery + "%'"; 
+		console.log(dbQuery);
+	    // Set Search Path
+	    client.query(dbQuery, function(err,result)
+	    {
+	    	// handle an error from the query
+			if(err)
+				console.log(err);
+
+		    if (handleError(err)) return;	
+		    
+		     done();	        		    
+		    res.setHeader('Content-Type', 'application/json');    	
+		    final_result = {"data":result.rows};
+			//res.send(final_result);	
+			console.log("result:" + result.rows);	        		    		    
+    		res.send(result.rows);
+	    });
+	});	
+});
 
 // Get Order Table data
 router.get('/getOrders',function(req,res,next) {			
