@@ -1,15 +1,38 @@
 require(["dojox/charting/Chart", "dojox/charting/themes/Tom", "dojo/store/Observable", "dojo/store/JsonRest", "dojox/charting/StoreSeries",
-"dojo/dom","dojo/dom-construct","dojo/on", "dojo/request","dojox/charting/plot2d/Lines",
+"dojo/dom","dojo/on", "dojo/dom-construct", "dojo/parser","dijit/registry", "dojo/request","dojox/charting/plot2d/Lines",
 "dojox/charting/axis2d/Default", "dojo/domReady!"], 
-					function(Chart, theme, Observable, JsonRest, StoreSeries,dom, domConstruct, on, request) {
-
-//require(["dojo/dom","dojo/dom-construct","dojo/on","dojo/request","dojox/charting/Chart","dojox/charting/themes/Tom","dojox/charting/plot2d/Lines",
-//"dojox/charting/plot2d/Markers","dojox/charting/axis2d/Default","dojox/charting/StoreSeries","dojo/store/Observable","dojo/store/Memory","dojo/domReady!"],
-//    function(dom, domConstruct, on, request, Chart, theme, StoreSeries,Observable,Memory)
- //   {
+function(Chart, theme, Observable, JsonRest, StoreSeries,dom, on, domConstruct, parser, registry, request)
+{
+        //require(["dojo/dom","dojo/dom-construct","dojo/on","dojo/request","dojox/charting/Chart","dojox/charting/themes/Tom","dojox/charting/plot2d/Lines",
+        //"dojox/charting/plot2d/Markers","dojox/charting/axis2d/Default","dojox/charting/StoreSeries","dojo/store/Observable","dojo/store/Memory","dojo/domReady!"],
+        //    function(dom, domConstruct, on, request, Chart, theme, StoreSeries,Observable,Memory)
+        //   {
+        parser.parse();
         var invRadio = dom.byId("invChartRadio");
         var orderRadio = dom.byId("orderChartRadio");
+ 
+        var minQtyInput = registry.byId('minQtySearch');
+        var maxQtyInput = registry.byId('maxQtySearch');
 
+        var filterChartButton = dom.byId('filterChartBtn');
+        on(filterChartButton, "click", function(evt)
+        {
+            var minQ = parseInt(minQtyInput.get("value"));
+            var maxQ = parseInt(maxQtyInput.get("value"));
+
+            // Validate quantity input
+            if(minQ == NaN || maxQ == NaN || minQ > maxQ)
+            {
+                alert('Invalid input for min and max quantity');
+                return;
+            }
+
+            var chart = dom.byId("chartNode");
+            domConstruct.empty(chart);
+            updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonRest,minQ,maxQ);            
+        });
+        
+        /*
         on(invRadio,"change",function(isChecked){
             if(isChecked)
             {
@@ -27,11 +50,12 @@ require(["dojox/charting/Chart", "dojox/charting/themes/Tom", "dojo/store/Observ
             }
         });
         updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonRest);
+        */
     }
 );
 
 
-function updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonRest)
+function updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonRest, minQ, maxQ)
 {
 
     //var chartData = [];
@@ -49,25 +73,33 @@ function updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonR
     });
 
     // Add axes
-    chart.addAxis("x");
-    chart.addAxis("y",{ min: 1, max: 20, vertical: true, fixLower: "major", fixUpper: "major" });
+    chart.addAxis("x");    
+    chart.addAxis("y",{ min: minQ-1, max: maxQ+1, vertical: true, fixLower: "major", fixUpper: "major" });
     
+    // Generate target URL based on search parameters
+    var targetURL = "/getInventoryWithFilter?minQ=" + minQ + "&maxQ=" + maxQ;
+
     // Store information in a data store on the client side
     var store = Observable(new JsonRest({
-        target: "/getInventory"
+        target: targetURL
     }));
 
+    /*
     // query the store
-    var results = store.query({"id":3});
+    //var results = store.query({ "id" : "3"});    
+    var results = store.query({});    
     
     // do something with the initial result set
     results.forEach(function(el,ind) {
         if(ind < 10)
             console.log(el);
     });
+    */
 
     // Add the storeseries - Query for all data
-    chart.addSeries("y", new StoreSeries(store, { query: { "id" : "3" } }, "quantity"));
+    //chart.addSeries("y", new StoreSeries(store, { query: { "id" : "3" } }, "quantity"));    
+    chart.addSeries("y", new StoreSeries(store,{}, "quantity"));
+
     // Render the chart!
     chart.render();
 

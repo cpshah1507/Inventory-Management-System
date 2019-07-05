@@ -13,6 +13,7 @@ See deployment for notes on how to deploy the project on a live system.
 ### Prerequisites
 
 - Node.js - https://nodejs.org/en/download/
+- PostgreSQL - https://www.postgresql.org/download/
 - Bower - https://bower.io/
 - Dojo and Dijit Widgets can be installed by using bower:
 ```
@@ -20,6 +21,13 @@ bower install dojo/dojo dojo/dijit dojo/dojox dojo/util
 ```
 
 ### Installing
+
+Setup a postgreSQL database and add sample data to tables.
+A sample database snapshot is added in postgres directory of this repository which can be loaded into the database (name:ims) with:
+
+```
+psql -U postgres -h localhost ims < ims_snapshot.sql
+```
 
 Install node dependencies by running:  
 

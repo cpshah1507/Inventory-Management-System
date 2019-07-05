@@ -6,5 +6,10 @@
 <label for="invChartRadio" class="radiolabel">Inventory Chart</label>
 <input type="radio" id="orderChartRadio" name="charttype"/>
 <label for="orderChartRadio" class="radiolabel">Order Chart</label>
+<div class="searchBar">
+    <span>Min Quantity:</span><input type="text" data-dojo-type="dijit/form/TextBox" id="minQtySearch"></input>
+    <span>Max Quantity:</span><input type="text" data-dojo-type="dijit/form/TextBox" id="maxQtySearch"></input>
+    <button id="filterChartBtn" type="button">Plot</button>
+</div>
 <!-- create the chart -->
 <div id="chartNode" style="width: 550px; height: 550px;"></div>

@@ -41,8 +41,6 @@ require(["dojo/dom","dojo/on","dojo/dom-construct","dojo/parser","dijit/registry
 
     updateInvetory(declare,RequestMemory,OnDemandGrid, Keyboard, Selection,request,"/getInventory");
     
-    
-
     on(searchButton, "click", function(evt)
     {
         domConstruct.empty("InventoryTable");
