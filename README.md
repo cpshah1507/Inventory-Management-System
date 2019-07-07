@@ -3,26 +3,21 @@ Inventory Management System
 
 - Application has database in postgres to store information about items and orders.
 - Back-end server in Node.js that connects to database.
-- Front-end client can be used to create orders and complete them. We can also view current inventory.
+- Front-end client can be used to visualize inventory and orders.
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.  
-See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
 
 - Node.js - https://nodejs.org/en/download/
 - PostgreSQL - https://www.postgresql.org/download/
-- Bower - https://bower.io/
-- Dojo and Dijit Widgets can be installed by using bower:
-```
-bower install dojo/dojo dojo/dijit dojo/dojox dojo/util
-```
+- Dojo - https://dojotoolkit.org/download/
 
 ### Installing
 
-Setup a postgreSQL database and add sample data to tables.
+Setup a postgreSQL database and add sample data to tables.  
 A sample database snapshot is added in postgres directory of this repository which can be loaded into the database (name:ims) with:
 
 ```

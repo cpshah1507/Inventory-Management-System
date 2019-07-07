@@ -1,8 +1,12 @@
-require(["dojox/charting/Chart", "dojox/charting/themes/Claro", "dojo/store/Observable", "dojo/store/JsonRest",
+require(["dojox/charting/Chart", "dojox/charting/widget/Legend","dojox/charting/action2d/Tooltip",
+"dojox/charting/action2d/MoveSlice","dojox/charting/action2d/Magnify","dojox/charting/action2d/Highlight",
+"dojox/charting/themes/Claro", "dojo/store/Observable", "dojo/store/JsonRest",
 "dojox/charting/StoreSeries","dojo/dom","dojo/on", "dojo/dom-construct", "dojo/parser","dojo/store/Memory",
 "dijit/form/ComboBox","dijit/registry","dojo/request","dojox/charting/plot2d/Lines","dojox/charting/plot2d/Pie",
-"dojox/charting/plot2d/Areas","dojox/charting/plot2d/Bars","dojox/charting/axis2d/Default","dojo/domReady!"], 
-function(Chart, theme, Observable, JsonRest, StoreSeries,dom, on, domConstruct, parser, Memory, ComboBox, registry, request)
+"dojox/charting/plot2d/Areas","dojox/charting/plot2d/Bars","dojox/charting/plot2d/Columns",
+"dojox/charting/axis2d/Default","dojo/domReady!"], 
+function(Chart,Legend,Tooltip,MoveSlice, Magnify, Highlight, theme, Observable, JsonRest, StoreSeries,dom, on, domConstruct, parser,
+    Memory, ComboBox, registry, request)
 {
     parser.parse();
     var invRadio = dom.byId("invChartRadio");
@@ -16,7 +20,8 @@ function(Chart, theme, Observable, JsonRest, StoreSeries,dom, on, domConstruct, 
             {name:"LineChart", id:"LC"},
             {name:"PieChart", id:"PC"},
             {name:"AreaChart", id:"AC"},
-            {name:"BarsChart", id:"BC"}
+            {name:"BarsChart", id:"BC"},
+            {name:"ColumnsChart", id:"CC"}
         ]
     });
 
@@ -44,7 +49,8 @@ function(Chart, theme, Observable, JsonRest, StoreSeries,dom, on, domConstruct, 
 
         var chart = dom.byId("chartNode");
         domConstruct.empty(chart);
-        updateInventoryChart(request, Chart, theme, chartType, StoreSeries,Observable,JsonRest,minQ,maxQ);            
+        updateInventoryChart(request, Chart, Legend, Tooltip, MoveSlice, Magnify, Highlight, theme, chartType,
+            StoreSeries,Observable,JsonRest,minQ,maxQ);            
     });
     
     /*
@@ -69,13 +75,12 @@ function(Chart, theme, Observable, JsonRest, StoreSeries,dom, on, domConstruct, 
 });
 
 
-function updateInventoryChart(request, Chart, theme, ChartType, StoreSeries,Observable,JsonRest, minQ, maxQ)
+function updateInventoryChart(request, Chart, Legend, Tooltip, MoveSlice, Magnify, Highlight, theme,
+    ChartType, StoreSeries,Observable,JsonRest, minQ, maxQ)
 {
-
-    //var chartData = [];
-  
     // Create the chart within it's "holding" node
     var chart = new Chart("chartNode");
+    
 
     // Set the theme
     chart.setTheme(theme);
@@ -92,46 +97,44 @@ function updateInventoryChart(request, Chart, theme, ChartType, StoreSeries,Obse
     
     // Generate target URL based on search parameters
     var targetURL = "/getInventoryWithFilter?minQ=" + minQ + "&maxQ=" + maxQ;
-
+   
     // Store information in a data store on the client side
     var store = Observable(new JsonRest({
         target: targetURL
     }));
-
-    /*
-    // query the store
-    //var results = store.query({ "id" : "3"});    
-    var results = store.query({});    
-    
-    // do something with the initial result set
-    results.forEach(function(el,ind) {
-        if(ind < 10)
-            console.log(el);
-    });
-    */
-
+   
     // Add the storeseries - Query for all data
-    //chart.addSeries("y", new StoreSeries(store, { query: { "id" : "3" } }, "quantity"));    
-    chart.addSeries("y", new StoreSeries(store,{}, "quantity"));
+    chart.addSeries("SKU by Quantity", new StoreSeries(store,{}, "quantity"), {stroke: {
+            color: "#532324",
+            width: 1
+        },
+        fill: "#123456"
+    });
 
+    // Add chart tooltip
+    var tip = new Tooltip(chart,"default");
+
+    // Add plotactions to visualize data better
+    if(ChartType == "Pie")
+    {
+        // Moves a pie slice: use the "pieChart" chart, and "default" plot
+        var slice = new MoveSlice(chart, "default");
+    }
+    
+    if(ChartType != "Bars" && ChartType != "Columns")
+    {
+        // Magnifies a marker: use the "chart" chart, and "default" plot
+        var magnify = new Magnify(chart, "default");
+    }
+
+    // Highlights an area: use the "chart" chart, and "default" plot
+    var highlight = new Highlight(chart, "default");
+
+    // Create the legend
+    var legend = new Legend({ chart: chart }, "legend");
+    
     // Render the chart!
     chart.render();
-
-    //chart.addSeries("y2", new StoreSeries(store, { query: { site: 2 } }, "value"));
-    //var store_sample = new RequestMemory({ target: '/getInventory' });
-    //chart.addSeries("y", new StoreSeries(store_sample, { query: { quantity: 1 } },"quantity"));
-
-    //chart.addSeries("SKU Quantity",chartData);
-    /*
-    request.get("/getInventory",{handleAs: "json"}).then(
-        function(result){
-            
-        },
-        function(error){
-            console.log("An error occurred: " + error);
-        }
-    );
-    */
 }
 
 
@@ -183,4 +186,6 @@ function getChartType(plotSelection)
         return "Areas";
     else if(plotSelection == "BarsChart")
         return "Bars";
+    else if(plotSelection == "ColumnsChart")
+        return "Columns";
 }
