@@ -1,61 +1,75 @@
-require(["dojox/charting/Chart", "dojox/charting/themes/Tom", "dojo/store/Observable", "dojo/store/JsonRest", "dojox/charting/StoreSeries",
-"dojo/dom","dojo/on", "dojo/dom-construct", "dojo/parser","dijit/registry", "dojo/request","dojox/charting/plot2d/Lines",
-"dojox/charting/axis2d/Default", "dojo/domReady!"], 
-function(Chart, theme, Observable, JsonRest, StoreSeries,dom, on, domConstruct, parser, registry, request)
+require(["dojox/charting/Chart", "dojox/charting/themes/Claro", "dojo/store/Observable", "dojo/store/JsonRest",
+"dojox/charting/StoreSeries","dojo/dom","dojo/on", "dojo/dom-construct", "dojo/parser","dojo/store/Memory",
+"dijit/form/ComboBox","dijit/registry","dojo/request","dojox/charting/plot2d/Lines","dojox/charting/plot2d/Pie",
+"dojox/charting/plot2d/Areas","dojox/charting/plot2d/Bars","dojox/charting/axis2d/Default","dojo/domReady!"], 
+function(Chart, theme, Observable, JsonRest, StoreSeries,dom, on, domConstruct, parser, Memory, ComboBox, registry, request)
 {
-        //require(["dojo/dom","dojo/dom-construct","dojo/on","dojo/request","dojox/charting/Chart","dojox/charting/themes/Tom","dojox/charting/plot2d/Lines",
-        //"dojox/charting/plot2d/Markers","dojox/charting/axis2d/Default","dojox/charting/StoreSeries","dojo/store/Observable","dojo/store/Memory","dojo/domReady!"],
-        //    function(dom, domConstruct, on, request, Chart, theme, StoreSeries,Observable,Memory)
-        //   {
-        parser.parse();
-        var invRadio = dom.byId("invChartRadio");
-        var orderRadio = dom.byId("orderChartRadio");
- 
-        var minQtyInput = registry.byId('minQtySearch');
-        var maxQtyInput = registry.byId('maxQtySearch');
+    parser.parse();
+    var invRadio = dom.byId("invChartRadio");
+    var orderRadio = dom.byId("orderChartRadio"); 
+    var minQtyInput = registry.byId('minQtySearch');
+    var maxQtyInput = registry.byId('maxQtySearch');
+    var filterChartButton = dom.byId('filterChartBtn');
 
-        var filterChartButton = dom.byId('filterChartBtn');
-        on(filterChartButton, "click", function(evt)
+    var stateStore = new Memory({
+        data: [
+            {name:"LineChart", id:"LC"},
+            {name:"PieChart", id:"PC"},
+            {name:"AreaChart", id:"AC"},
+            {name:"BarsChart", id:"BC"}
+        ]
+    });
+
+    var comboBox = new ComboBox({
+        id: "plotTypeSelect",
+        name: "plotType",
+        value: "LineChart",
+        store: stateStore,
+        searchAttr: "name"
+    }, "plotTypeSelect").startup();
+
+    on(filterChartButton, "click", function(evt)
+    {
+        var minQ = parseInt(minQtyInput.get("value"));
+        var maxQ = parseInt(maxQtyInput.get("value"));
+
+        // Validate quantity input
+        if(isNaN(minQ) || isNaN(maxQ) || minQ > maxQ)
         {
-            var minQ = parseInt(minQtyInput.get("value"));
-            var maxQ = parseInt(maxQtyInput.get("value"));
+            alert('Invalid input for min and max quantity');
+            return;
+        }
 
-            // Validate quantity input
-            if(minQ == NaN || maxQ == NaN || minQ > maxQ)
-            {
-                alert('Invalid input for min and max quantity');
-                return;
-            }
+        var chartType = getChartType(dijit.byId('plotTypeSelect').get('value'));
 
+        var chart = dom.byId("chartNode");
+        domConstruct.empty(chart);
+        updateInventoryChart(request, Chart, theme, chartType, StoreSeries,Observable,JsonRest,minQ,maxQ);            
+    });
+    
+    /*
+    on(invRadio,"change",function(isChecked){
+        if(isChecked)
+        {
             var chart = dom.byId("chartNode");
             domConstruct.empty(chart);
-            updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonRest,minQ,maxQ);            
-        });
-        
-        /*
-        on(invRadio,"change",function(isChecked){
-            if(isChecked)
-            {
-                var chart = dom.byId("chartNode");
-                domConstruct.empty(chart);
-                updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonRest);
-            }
-        });
-        on(orderRadio,"change",function(isChecked){
-            if(isChecked)
-            {
-                var chart = dom.byId("chartNode");
-                domConstruct.empty(chart);
-                updateOrderChart(request, Chart, theme,StoreSeries,Observable,JsonRest);
-            }
-        });
-        updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonRest);
-        */
-    }
-);
+            updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonRest);
+        }
+    });
+    on(orderRadio,"change",function(isChecked){
+        if(isChecked)
+        {
+            var chart = dom.byId("chartNode");
+            domConstruct.empty(chart);
+            updateOrderChart(request, Chart, theme,StoreSeries,Observable,JsonRest);
+        }
+    });
+    updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonRest);
+    */
+});
 
 
-function updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonRest, minQ, maxQ)
+function updateInventoryChart(request, Chart, theme, ChartType, StoreSeries,Observable,JsonRest, minQ, maxQ)
 {
 
     //var chartData = [];
@@ -64,11 +78,11 @@ function updateInventoryChart(request, Chart, theme,StoreSeries,Observable,JsonR
     var chart = new Chart("chartNode");
 
     // Set the theme
-    //chart.setTheme(theme);
+    chart.setTheme(theme);
 
     // Add the only/default plot
     chart.addPlot("default", {
-        type: "Lines",
+        type: ChartType,
         markers: true
     });
 
@@ -157,4 +171,16 @@ function updateOrderChart(request, Chart, theme,RequestMemory,StoreSeries,Observ
             console.log("An error occurred: " + error);
         }
     );
+}
+
+function getChartType(plotSelection)
+{
+    if(plotSelection == "LineChart")
+        return "Lines";
+    else if(plotSelection == "PieChart")
+        return "Pie";
+    else if(plotSelection == "AreaChart")
+        return "Areas";
+    else if(plotSelection == "BarsChart")
+        return "Bars";
 }
