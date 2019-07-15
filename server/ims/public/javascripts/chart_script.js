@@ -5,8 +5,8 @@ require(["dojox/charting/Chart", "dojox/charting/widget/Legend","dojox/charting/
 "dijit/form/ComboBox","dijit/registry","dojo/request","dojox/charting/plot2d/Lines","dojox/charting/plot2d/Pie",
 "dojox/charting/plot2d/Areas","dojox/charting/plot2d/Bars","dojox/charting/plot2d/Columns",
 "dojox/charting/axis2d/Default","dojo/domReady!"], 
-function(Chart,Legend,Tooltip,MoveSlice, Magnify, Highlight, theme, Observable, JsonRest, StoreSeries,dom, on, domConstruct, parser,
-    Memory, ComboBox, registry, request)
+function(Chart,Legend,Tooltip,MoveSlice, Magnify, Highlight, theme, Observable, JsonRest, StoreSeries,dom, on, 
+    domConstruct, parser, Memory, ComboBox, registry, request)
 {
     parser.parse();
     var invRadio = dom.byId("invChartRadio");
